@@ -1,311 +1,308 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="stealth">
+<html lang="en" data-theme="obsidian">
 <head>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f1115">
-<link rel="apple-touch-icon" href="https://www.w3.org/TR/appmanifest/images/icon-192.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LyricVault</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0e14">
+    <link rel="apple-touch-icon" href="https://www.w3.org/TR/appmanifest/images/icon-192.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        :root[data-theme="stealth"] {
-            --bg-main: #0f1115;
-            --bg-panel: #1a1d24;
-            --text-primary: #e2e8f0;
+        :root[data-theme="obsidian"] {
+            --bg-base: #0b0e14;
+            --bg-surface: #151a23;
+            --bg-elevated: #1e2532;
+            --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --border: #334155;
+            --accent-glow: rgba(59, 130, 246, 0.4);
             --danger: #ef4444;
         }
 
-        :root[data-theme="cyber"] {
-            --bg-main: #050505;
-            --bg-panel: #0a0a0a;
+        :root[data-theme="neon-matrix"] {
+            --bg-base: #050505;
+            --bg-surface: #0a0a0a;
+            --bg-elevated: #141414;
             --text-primary: #ffffff;
             --text-secondary: #6b7280;
             --accent: #10b981;
-            --accent-hover: #059669;
-            --border: #1f2937;
-            --danger: #dc2626;
+            --accent-glow: rgba(16, 185, 129, 0.4);
+            --danger: #ef4444;
         }
 
-        :root[data-theme="monolith"] {
-            --bg-main: #18181b;
-            --bg-panel: #27272a;
-            --text-primary: #f4f4f5;
-            --text-secondary: #a1a1aa;
-            --accent: #ffffff;
-            --accent-hover: #d4d4d8;
-            --border: #3f3f46;
-            --danger: #f87171;
+        :root[data-theme="forge"] {
+            --bg-base: #110c0c;
+            --bg-surface: #1c1414;
+            --bg-elevated: #2b1d1d;
+            --text-primary: #f5ecec;
+            --text-secondary: #a39090;
+            --accent: #f97316;
+            --accent-glow: rgba(249, 115, 22, 0.4);
+            --danger: #ef4444;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-main);
+            background-color: var(--bg-base);
             color: var(--text-primary);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* --- Main Screen View --- */
+        .home-screen {
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
         header {
+            padding: 2rem 1.5rem 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 2rem;
-            background-color: var(--bg-panel);
-            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, var(--bg-base) 60%, transparent);
             z-index: 10;
         }
 
-        .logo {
-            font-size: 1.5rem;
+        .brand h1 {
+            font-size: 2rem;
             font-weight: 800;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        select, button {
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
+        .theme-select {
+            background-color: var(--bg-surface);
+            color: var(--text-secondary);
+            border: 1px solid var(--bg-elevated);
+            padding: 0.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
             font-weight: 600;
             outline: none;
-            transition: all 0.2s ease;
+            cursor: pointer;
+            appearance: none;
         }
 
-        select:focus, button:focus {
-            border-color: var(--accent);
-        }
-
-        button.primary {
-            background-color: var(--accent);
-            color: var(--bg-main);
-            border: none;
-        }
-
-        button.primary:hover {
-            background-color: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .container {
-            display: flex;
+        .song-list {
             flex: 1;
+            overflow-y: auto;
+            padding: 0 1.5rem 6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .song-card {
+            background-color: var(--bg-surface);
+            border-radius: 20px;
+            padding: 1.5rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: transform 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+            position: relative;
             overflow: hidden;
         }
 
-        .sidebar {
-            width: 300px;
-            background-color: var(--bg-panel);
-            border-right: 1px solid var(--border);
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
+        .song-card:active {
+            transform: scale(0.97);
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                position: absolute;
-                height: calc(100vh - 73px);
-                transform: translateX(0);
-                z-index: 5;
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            .sidebar.hidden {
-                transform: translateX(-100%);
-            }
-        }
-
-        .song-item {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            animation: slideInLeft 0.3s ease forwards;
+        .song-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background-color: var(--accent);
             opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .song-item:hover {
-            background-color: var(--bg-main);
+        .song-card:hover::before {
+            opacity: 1;
         }
 
-        .song-title {
-            font-size: 1.1rem;
+        .card-title {
+            font-size: 1.25rem;
             font-weight: 600;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.4rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .song-date {
-            font-size: 0.8rem;
+        .card-meta {
+            font-size: 0.85rem;
             color: var(--text-secondary);
+            font-weight: 300;
         }
 
-        .editor-container {
-            flex: 1;
+        /* --- Floating Action Button (FAB) --- */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 64px;
+            height: 64px;
+            border-radius: 24px;
+            background-color: var(--accent);
+            color: var(--bg-base);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 300;
+            cursor: pointer;
+            box-shadow: 0 8px 32px var(--accent-glow);
+            z-index: 20;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .fab:active {
+            transform: scale(0.9) rotate(15deg);
+        }
+
+        /* --- Full Screen Editor (Slide Up) --- */
+        .editor-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-base);
+            z-index: 100;
             display: flex;
             flex-direction: column;
-            padding: 2rem;
-            background-color: var(--bg-main);
-            overflow-y: auto;
-            position: relative;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            will-change: transform;
         }
 
-        .editor-header {
+        .editor-screen.active {
+            transform: translateY(0);
+        }
+
+        .editor-nav {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1.5rem;
+            align-items: center;
+            padding: 1.5rem;
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--bg-elevated);
         }
 
-        .title-input {
-            width: 100%;
+        .btn-icon {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-elevated);
+        }
+
+        .btn-icon.danger {
+            color: var(--danger);
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .editor-body {
+            flex: 1;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .input-title {
             background: transparent;
             border: none;
             color: var(--text-primary);
             font-size: 2.5rem;
-            font-weight: 700;
+            font-weight: 800;
             outline: none;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid transparent;
-            transition: border-color 0.3s ease;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
         }
 
-        .title-input:focus {
-            border-bottom: 2px solid var(--accent);
+        .input-title::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.5;
         }
 
-        .lyrics-input {
+        .input-lyrics {
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
+            color: var(--text-primary);
+            font-size: 1.15rem;
+            font-weight: 400;
             line-height: 1.8;
             outline: none;
             resize: none;
         }
 
-        .lyrics-input:focus {
-            color: var(--text-primary);
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn-delete {
-            background-color: transparent;
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-
-        .btn-delete:hover {
-            background-color: var(--danger);
-            color: white;
+        .input-lyrics::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.3;
         }
 
         .empty-state {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
+            text-align: center;
+            margin-top: 50%;
             color: var(--text-secondary);
-            font-size: 1.2rem;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        /* Animations */
-        @keyframes slideInLeft {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-fade {
-            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        .mobile-toggle {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-toggle {
-                display: block;
-            }
-            .editor-container {
-                padding: 1.5rem;
-            }
-            .title-input {
-                font-size: 1.8rem;
-            }
+            font-weight: 300;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">Vault</div>
-        <div class="controls">
-            <select id="theme-selector">
-                <option value="stealth">Stealth</option>
-                <option value="cyber">Cyber</option>
-                <option value="monolith">Monolith</option>
+    <div class="home-screen" id="home-screen">
+        <header>
+            <div class="brand">
+                <h1>Vault</h1>
+            </div>
+            <select class="theme-select" id="theme-selector">
+                <option value="obsidian">Obsidian</option>
+                <option value="neon-matrix">Matrix</option>
+                <option value="forge">Forge</option>
             </select>
-            <button class="mobile-toggle" id="toggle-sidebar">☰</button>
-            <button class="primary" id="btn-new">New Track</button>
-        </div>
-    </header>
+        </header>
 
-    <div class="container">
-        <div class="sidebar" id="sidebar">
+        <div class="song-list" id="song-list">
             </div>
 
-        <div class="editor-container" id="editor" style="display: none;">
-            <div class="animate-fade" style="height: 100%; display: flex; flex-direction: column;">
-                <div class="editor-header">
-                    <input type="text" class="title-input" id="song-title" placeholder="Untitled Track...">
-                    <div class="action-buttons">
-                        <button class="btn-delete" id="btn-delete">Drop</button>
-                        <button class="primary" id="btn-save">Commit</button>
-                    </div>
-                </div>
-                <textarea class="lyrics-input" id="song-lyrics" placeholder="Write the vision here..."></textarea>
-            </div>
-        </div>
+        <div class="fab" id="btn-fab">+</div>
+    </div>
 
-        <div class="empty-state" id="empty-state">
-            <p>No track selected.</p>
+    <div class="editor-screen" id="editor-screen">
+        <div class="editor-nav">
+            <button class="btn-icon" id="btn-back">↓</button>
+            <button class="btn-icon danger" id="btn-delete">×</button>
+        </div>
+        <div class="editor-body">
+            <input type="text" class="input-title" id="input-title" placeholder="Track Title...">
+            <textarea class="input-lyrics" id="input-lyrics" placeholder="Start tracking vocals..."></textarea>
         </div>
     </div>
 
@@ -314,31 +311,72 @@
         let songs = JSON.parse(localStorage.getItem('lyricVault_songs')) || [];
         let currentSongId = null;
 
-        // DOM Elements
-        const sidebar = document.getElementById('sidebar');
-        const editor = document.getElementById('editor');
-        const emptyState = document.getElementById('empty-state');
-        const titleInput = document.getElementById('song-title');
-        const lyricsInput = document.getElementById('song-lyrics');
-        const btnNew = document.getElementById('btn-new');
-        const btnSave = document.getElementById('btn-save');
+        // Elements
+        const songList = document.getElementById('song-list');
+        const editorScreen = document.getElementById('editor-screen');
+        const inputTitle = document.getElementById('input-title');
+        const inputLyrics = document.getElementById('input-lyrics');
+        const btnFab = document.getElementById('btn-fab');
+        const btnBack = document.getElementById('btn-back');
         const btnDelete = document.getElementById('btn-delete');
         const themeSelector = document.getElementById('theme-selector');
-        const toggleSidebarBtn = document.getElementById('toggle-sidebar');
 
-        // Initialization
+        // Init
         function init() {
-            const savedTheme = localStorage.getItem('lyricVault_theme') || 'stealth';
+            const savedTheme = localStorage.getItem('lyricVault_theme') || 'obsidian';
             document.documentElement.setAttribute('data-theme', savedTheme);
             themeSelector.value = savedTheme;
-            renderSidebar();
+            renderList();
         }
 
-        // Core Functions
-        function saveSong() {
-            const title = titleInput.value.trim() || 'Untitled Track';
-            const lyrics = lyricsInput.value;
-            const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        // Render List
+        function renderList() {
+            songList.innerHTML = '';
+            
+            if (songs.length === 0) {
+                songList.innerHTML = '<div class="empty-state">No tracks found. Hit + to start.</div>';
+                return;
+            }
+
+            songs.forEach((song) => {
+                const card = document.createElement('div');
+                card.className = 'song-card';
+                card.innerHTML = `
+                    <div class="card-title">${song.title || 'Untitled Track'}</div>
+                    <div class="card-meta">Updated ${song.date}</div>
+                `;
+                card.onclick = () => openEditor(song.id);
+                songList.appendChild(card);
+            });
+        }
+
+        // Editor Logic
+        function openEditor(id = null) {
+            currentSongId = id;
+            if (id) {
+                const song = songs.find(s => s.id === id);
+                inputTitle.value = song.title;
+                inputLyrics.value = song.lyrics;
+            } else {
+                inputTitle.value = '';
+                inputLyrics.value = '';
+            }
+            editorScreen.classList.add('active');
+        }
+
+        function closeEditor() {
+            editorScreen.classList.remove('active');
+            inputTitle.blur();
+            inputLyrics.blur();
+        }
+
+        function saveData() {
+            const title = inputTitle.value.trim();
+            const lyrics = inputLyrics.value;
+            const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            // Don't save if completely empty
+            if (!title && !lyrics) return;
 
             if (currentSongId) {
                 const index = songs.findIndex(s => s.id === currentSongId);
@@ -350,103 +388,51 @@
             }
 
             localStorage.setItem('lyricVault_songs', JSON.stringify(songs));
-            renderSidebar();
-            
-            if (window.innerWidth <= 768) sidebar.classList.add('hidden');
-        }
-
-        function loadSong(id) {
-            const song = songs.find(s => s.id === id);
-            if (!song) return;
-
-            currentSongId = id;
-            titleInput.value = song.title;
-            lyricsInput.value = song.lyrics;
-            
-            emptyState.style.display = 'none';
-            editor.style.display = 'flex';
-
-            // Re-trigger animation
-            const animateElement = editor.querySelector('.animate-fade');
-            animateElement.style.animation = 'none';
-            animateElement.offsetHeight; // trigger reflow
-            animateElement.style.animation = null; 
-
-            if (window.innerWidth <= 768) sidebar.classList.add('hidden');
+            renderList();
         }
 
         function deleteSong() {
-            if (!currentSongId) return;
-            songs = songs.filter(s => s.id !== currentSongId);
-            localStorage.setItem('lyricVault_songs', JSON.stringify(songs));
+            if (!currentSongId) {
+                closeEditor();
+                return;
+            }
             
-            currentSongId = null;
-            editor.style.display = 'none';
-            emptyState.style.display = 'flex';
-            renderSidebar();
+            if(confirm('Drop this track?')) {
+                songs = songs.filter(s => s.id !== currentSongId);
+                localStorage.setItem('lyricVault_songs', JSON.stringify(songs));
+                currentSongId = null;
+                renderList();
+                closeEditor();
+            }
         }
 
-        function renderSidebar() {
-            sidebar.innerHTML = '';
-            songs.forEach((song, index) => {
-                const div = document.createElement('div');
-                div.className = 'song-item';
-                div.style.animationDelay = `${index * 0.05}s`;
-                div.innerHTML = `
-                    <div class="song-title">${song.title}</div>
-                    <div class="song-date">${song.date}</div>
-                `;
-                div.onclick = () => loadSong(song.id);
-                sidebar.appendChild(div);
+        // Listeners
+        btnFab.addEventListener('click', () => openEditor(null));
+        btnBack.addEventListener('click', closeEditor);
+        btnDelete.addEventListener('click', deleteSong);
+
+        let timeout;
+        const triggerSave = () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(saveData, 800);
+        };
+
+        inputTitle.addEventListener('input', triggerSave);
+        inputLyrics.addEventListener('input', triggerSave);
+
+        themeSelector.addEventListener('change', (e) => {
+            document.documentElement.setAttribute('data-theme', e.target.value);
+            localStorage.setItem('lyricVault_theme', e.target.value);
+        });
+
+        // Register Service Worker (PWA functionality)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
             });
         }
 
-        // Event Listeners
-        btnNew.addEventListener('click', () => {
-            currentSongId = null;
-            titleInput.value = '';
-            lyricsInput.value = '';
-            emptyState.style.display = 'none';
-            editor.style.display = 'flex';
-            titleInput.focus();
-            if (window.innerWidth <= 768) sidebar.classList.add('hidden');
-        });
-
-        btnSave.addEventListener('click', saveSong);
-        btnDelete.addEventListener('click', deleteSong);
-        
-        // Auto-save logic (triggers 1 second after typing stops)
-        let timeout = null;
-        lyricsInput.addEventListener('input', () => {
-            clearTimeout(timeout);
-            timeout = setTimeout(saveSong, 1000);
-        });
-        titleInput.addEventListener('input', () => {
-            clearTimeout(timeout);
-            timeout = setTimeout(saveSong, 1000);
-        });
-
-        themeSelector.addEventListener('change', (e) => {
-            const theme = e.target.value;
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('lyricVault_theme', theme);
-        });
-
-        toggleSidebarBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('hidden');
-        });
-
-        // Run
         init();
     </script>
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registered successfully', reg.scope))
-                .catch(err => console.error('Service Worker registration failed', err));
-        });
-    }
-</script>
 </body>
 </html>
